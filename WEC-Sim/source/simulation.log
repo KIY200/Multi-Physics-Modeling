@@ -1,0 +1,30 @@
+
+WEC-Sim Input From Standard wecSimInputFile.m Of Case Directory... 
+WEC-Sim: An open-source code for simulating wave energy converters
+Version: 4.4
+
+Initializing the Simulation Class...
+	Case Dir: /Users/inyongkim/Desktop/DOE project/Yong_Stuff/WEC-Sim/source 
+Error using <a href="matlab:matlab.internal.language.introspective.errorDocCallback('simulationClass/checkinputs')" style="font-weight:bold">simulationClass/checkinputs</a>
+The simMechanics file, /Users/inyongkim/Desktop/DOE project/Yong_Stuff/WEC-Sim/source/OSWEC.slx, does not exist in the case directory
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('initializeWecSim', '/Users/inyongkim/Desktop/DOE project/Yong_Stuff/WEC-Sim/source/functions/initializeWecSim.m', 101)" style="font-weight:bold">initializeWecSim</a> (<a href="matlab: opentoline('/Users/inyongkim/Desktop/DOE project/Yong_Stuff/WEC-Sim/source/functions/initializeWecSim.m',101,0)">line 101</a>)
+simu.checkinputs;
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run', '/Applications/MATLAB_R2022a.app/toolbox/matlab/lang/run.m', 91)" style="font-weight:bold">run</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2022a.app/toolbox/matlab/lang/run.m',91,0)">line 91</a>)
+evalin('caller', strcat(script, ';'));
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('wecSim', '/Users/inyongkim/Desktop/DOE project/Yong_Stuff/WEC-Sim/source/wecSim.m', 45)" style="font-weight:bold">wecSim</a> (<a href="matlab: opentoline('/Users/inyongkim/Desktop/DOE project/Yong_Stuff/WEC-Sim/source/wecSim.m',45,0)">line 45</a>)
+run('initializeWecSim');
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('run', '/Applications/MATLAB_R2022a.app/toolbox/matlab/lang/run.m', 91)" style="font-weight:bold">run</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2022a.app/toolbox/matlab/lang/run.m',91,0)">line 91</a>)
+evalin('caller', strcat(script, ';'));
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('analysis_v2', '/Users/inyongkim/Desktop/DOE project/Yong_Stuff/analysis_v2.m', 16)" style="font-weight:bold">analysis_v2</a> (<a href="matlab: opentoline('/Users/inyongkim/Desktop/DOE project/Yong_Stuff/analysis_v2.m',16,0)">line 16</a>)
+run('WEC-Sim/source/wecSim.m')
+
+WEC-Sim: An open-source code for simulating wave energy converters
+Version: 4.4
+
+Initializing the Simulation Class...
+	Case Dir: /Users/inyongkim/Desktop/DOE project/Yong_Stuff/WEC-Sim/examples/RM3 
