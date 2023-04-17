@@ -1,7 +1,7 @@
 %% loading Eigenmode data
 % hydro=load('22_Yong.mat');
 %% equivalent circuit initialization 
-% WEC_Sim=load('current.mat');
+WEC_Sim=load('current.mat');
 %% simulation parameter
 simu.duration= WEC_Sim.simu.endTime-WEC_Sim.simu.startTime; % duration of the simualtion
 simu.t_ramp = WEC_Sim.simu.rampTime; %ramp function saturation time

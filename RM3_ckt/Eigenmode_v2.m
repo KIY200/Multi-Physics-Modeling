@@ -10,7 +10,7 @@ function hydro = Eigenmode_v2(Bpto)
     
     details.CSRT.d = abs(details.CSRT.CGf(3)-details.CSRT.CGs(3));
     
-    Tc = [diag([1 1 1 1 1 1]) [0;0;1;0;0;0];...
+    Tc = [diag([1 1 0 1 1 1]) [0;0;1;0;0;0];...
            diag([1,1,1,1,1,1]) zeros(6,1)];
     Tc(1,5)=details.CSRT.d;Tc(2,4)=details.CSRT.d;
     
