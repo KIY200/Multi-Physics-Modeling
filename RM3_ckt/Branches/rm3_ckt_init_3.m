@@ -1,3 +1,4 @@
+clc;
 %% loading Eigenmode data
 % hydro=load('22_Yong.mat');
 %% equivalent circuit initialization 
@@ -59,6 +60,15 @@ hydro.Phi72=squeeze(hydro.Phi(:,:,wave.indx));
 % end
 
 %% PTO control
+PTO.Rs=4.58;
+PTO.Ls=0.258;
+PTO.pp=87.266*0.5;
+PTO.lambda=8;
+PTO.fsw=10e3;
+PTO.wi=2*pi*PTO.fsw*0.1;
+PTO.Y_star=1.2e6;
+PTO.Rload=0.5;
+
 
 PTO.Bpto22 = squeeze(hydro.Bpto22(:,:,wave.indx)); % PTO damping coefficient
 
