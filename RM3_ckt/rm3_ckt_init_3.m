@@ -1,5 +1,3 @@
-%% loading Eigenmode data
-% hydro=load('22_Yong.mat');
 %% equivalent circuit initialization 
 WEC_Sim=load('current.mat');
 %% simulation parameter
@@ -59,6 +57,14 @@ hydro.Phi72=squeeze(hydro.Phi(:,:,wave.indx));
 % end
 
 %% PTO control
+PTO.Rs=4.58;
+PTO.Ls=0.258;
+PTO.pp=87.266*0.5;
+PTO.lambda=8;
+PTO.fsw=10e3;
+PTO.wi=2*pi*PTO.fsw*0.1;
+PTO.Y_star=1.2e6;
+PTO.Rload=0.5;
 
 PTO.Bpto22 = squeeze(hydro.Bpto22(:,:,wave.indx)); % PTO damping coefficient
 
@@ -67,7 +73,34 @@ PTO.K_hs = squeeze(hydro.K_hs_22(:,:,wave.indx));
 PTO.B_rad22 = squeeze(hydro.B_rad_22(:,:,wave.indx));
 PTO.B22 = squeeze(hydro.B22(:,:,wave.indx));
 
-%%resistor coupling model
-PTO.R1 = 1/(PTO.B_rad22(1,1)+PTO.B_rad22(1,2)+PTO.Bpto22(1,1)+PTO.Bpto22(1,2));
-PTO.R2 = 1/(PTO.B_rad22(2,2)+PTO.B_rad22(2,1)+PTO.Bpto22(2,2)+PTO.Bpto22(2,1));
+% %%resistor coupling model
+% PTO.R1 = 1/(PTO.B_rad22(1,1)+PTO.B_rad22(1,2)+PTO.Bpto22(1,1)+PTO.Bpto22(1,2));
+% PTO.R2 = 1/(PTO.B_rad22(2,2)+PTO.B_rad22(2,1)+PTO.Bpto22(2,2)+PTO.Bpto22(2,1));
 
+PTO.Mass_b1 = hydro.Mass_22(1,1,wave.indx);
+PTO.Mass_b2 = hydro.Mass_22(2,2,wave.indx);
+PTO.K_hs_b1 = hydro.K_hs_22(1,1,wave.indx);
+PTO.K_hs_b2 = hydro.K_hs_22(2,2,wave.indx);
+PTO.B_rad_b1 = hydro.B_rad_22(1,1,wave.indx);
+PTO.B_rad_b2 = hydro.B_rad_22(2,2,wave.indx);
+
+%% Impedance matching
+PTO.Rf = 1/PTO.B_rad_b1;
+PTO.Rs = 1/PTO.B_rad_b2;
+PTO.X_Lf = 1/PTO.K_hs_b1*1j*wave.w;
+PTO.X_Ls = 1/PTO.K_hs_b2*1j*wave.w;
+PTO.X_Cf = 1/(PTO.Mass_b1*1j*wave.w);
+PTO.X_Cs = 1/(PTO.Mass_b2*1j*wave.w);
+
+PTO.Zf = 1/(1/PTO.Rf+1/PTO.X_Lf+1/PTO.X_Cf);
+PTO.Zs = 1/(1/PTO.Rs+1/PTO.X_Ls+1/PTO.X_Cs);
+
+PTO.Z_eq = PTO.Zf+PTO.Zs;
+PTO.Y_eq = 1/PTO.Z_eq;
+PTO.Y_pto = conj(PTO.Y_eq);
+
+PTO.R_pto = 1/real(PTO.Y_pto);
+PTO.C_pto = abs(imag(PTO.Y_pto)/wave.w);
+PTO.L_pto = 1/abs(imag(PTO.Y_pto)*wave.w);
+
+PTO.R_opt = 1/abs(PTO.Y_pto);
