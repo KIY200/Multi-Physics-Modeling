@@ -1,6 +1,7 @@
 
 %% wave config
 clc;clear;
+addpath("functions/")
 T = input('Choose a period:  ');
 
 % %% WEC-Sim
@@ -16,7 +17,7 @@ T = input('Choose a period:  ');
 %% Clear all variables except simulation parameter T
 clearvars -except T
 %% equivalent circuit initialization 
-loadfile=sprintf('JS_G1/JS_G1_T%d_WEC.mat',T); 
+loadfile=sprintf('wavedata/JS_G1_T%d_WEC.mat',T); 
 WEC_Sim=load(loadfile); % fetching WEC-Sim wave data
 %% simulation parameter
 simu.duration= WEC_Sim.simu.endTime-WEC_Sim.simu.startTime; % duration of the simualtion
@@ -39,7 +40,7 @@ wave.instf.f=[wave.instf.f(1); wave.instf.f]'; % extrapolation for first time st
 %% Fixed frequency simulation
 % wave.instf.f=1/wave.T*ones(length(wave.instf.f)); %fixed frequency
 
-%% creating wave index at each time step with referring to instantaneous frequency or fixed frequency
+%% creating wave index at each time step
 wave.Tcomp=zeros(length(WEC_Sim.waves.freqRange),length(simu.t));
 wave.indx=zeros(1,length(simu.t));
 for ii=1:length(simu.t)
@@ -52,20 +53,19 @@ Tc_param=2; % Tc_param 1.original 7th DOF is relative heave between float and sp
 hydro=Eigenmode_v3(Tc_param); 
 %% Excitation Force
 hydro.Fex.all=[WEC_Sim.output.bodies(1).forceExcitation';WEC_Sim.output.bodies(2).forceExcitation'];
-
 for ii=1:length(simu.t)
-hydro.Phi72(:,:,ii)=hydro.Phi(:,:,wave.indx(ii)); 
+    hydro.Phi72(:,:,ii)=hydro.Phi(:,:,wave.indx(ii)); 
     hydro.Fex2(:,ii)=squeeze(hydro.Phi72(:,:,ii))'*hydro.Tc'*hydro.Fex.all(:,ii);
 end
-    Fex_1=timeseries(squeeze(hydro.Fex2(1,:))',simu.t');
-    Fex_2=timeseries(squeeze(hydro.Fex2(2,:))',simu.t');
+Fex_1=timeseries(squeeze(hydro.Fex2(1,:))',simu.t');
+Fex_2=timeseries(squeeze(hydro.Fex2(2,:))',simu.t');
 %% hydrodynamic coefficients for PTO control optimization
 PTO=cal_PTO(hydro,simu.t,wave);
 hydro.Z_table = Z_table(hydro,wave);
-hydro.Z_table_RM3 = Z_table_RM3(hydro);
+% hydro.Z_table_RM3 = Z_table_RM3(hydro);
 
-% %% Impedance matching
-% Z_OPT = Z_match(hydro,wave,simu);
+%% Impedance matching
+Z_OPT = Z_match(hydro,wave,simu);
 % Z_OPT_fixed = Z_match_fixedf(hydro,wave);
 % Z_OPT_RM3 = Z_match_RM3(hydro,wave,simu);
 % 
