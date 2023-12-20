@@ -77,6 +77,28 @@ Z_OPT = Z_match(hydro,wave,simu);
 % out=sim("inst_T.slx");
 % filename=sprintf('JS_G1/JS_G1_T%d_ckt',T);
 % save(filename,"out","hydro")
+%%  Linear Generator PTO-Sim  
+%%Note you need to import the timeseries data from F_ex.mat into the current workspace 
+% and then run this script.
+ptosim = ptoSimClass('Direct Drive Linear Generator');
+%% Linear Generator
+
+ptosim.pmLinearGenerator.Rs = 4.58;                   % Winding resistance [ohm]
+ptosim.pmLinearGenerator.Bfric = -100;                % Friction coefficient
+ptosim.pmLinearGenerator.tau_p = 0.072;               % Magnet pole pitch [m]
+ptosim.pmLinearGenerator.lambda_fd = 8;               % Flux linkage of the stator d winding due to flux produced by the rotor magnets [Wb-turns]
+                                                      % (recognizing that the d-axis is always aligned with the rotor magnetic axis)                                                                                                                    
+ptosim.pmLinearGenerator.Ls = 0.285;                  % Inductance of the coil [H]
+ptosim.pmLinearGenerator.theta_d_0 = 0;
+ptosim.pmLinearGenerator.lambda_sq_0 = 0;
+ptosim.pmLinearGenerator.lambda_sd_0 = ptosim.pmLinearGenerator.lambda_fd;
+ptosim.pmLinearGenerator.Rload = 0.5;                 % Load Resistance [ohm]
+
+ptosim.pmLinearGenerator.fsw=100e3;
+ptosim.pmLinearGenerator.BWi=2*pi*ptosim.pmLinearGenerator.fsw*0.01;
+
+
+
 % %% plotting
 % run("plotting_vs_WECSIm/plotting_7th_heaveoffloat.m")
 % %% plot PTO params
