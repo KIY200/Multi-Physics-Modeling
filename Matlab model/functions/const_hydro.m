@@ -2,7 +2,6 @@ function [Fex7,M7,K_hs7,B_rad7,wave] = const_hydro(Tc)
 
     %%% wave characteristic
     wave.T = h5read('hydro/rm3.h5','/simulation_parameters/T'); % wave periods 
-    wave.H = 2; % wave heights corresponding to the above periods
     wave.w = 2*pi./wave.T;
 
     %%% Excitation Force Coefficients
@@ -35,15 +34,18 @@ function [Fex7,M7,K_hs7,B_rad7,wave] = const_hydro(Tc)
     details.M.M_f = zeros(260,12,6);
     details.M.M_s = zeros(260,12,6);
     details.M.Mass = zeros(260,12,12);
+    details.M_add7 = zeros(260,12,12);
     M7 = zeros(260,7,7);
-    
+    M_add7 = zeros(260,7,7);
     for ii=1:260
     details.M.M_f(ii,:,:) = details.M.m_f+squeeze(details.M.m_a_f(ii,:,:));
     details.M.M_s(ii,:,:) = details.M.m_s+squeeze(details.M.m_a_s(ii,:,:));
     details.M.Mass(ii,:,:) = [squeeze(details.M.M_f(ii,1:6,:)) zeros(6,6);zeros(6,6) squeeze(details.M.M_s(ii,7:12,:))];
+    details.M_add(ii,:,:) = [squeeze(details.M.m_a_f(ii,1:6,:)) zeros(6,6);zeros(6,6) squeeze(details.M.m_a_s(ii,7:12,:))];
     M7(ii,:,:) = Tc'*squeeze(details.M.Mass(ii,:,:))*Tc;
+    M_add7(ii,:,:) = Tc'*squeeze(details.M_add(ii,:,:))*Tc;
     end
-
+    wave.M_add7=M_add7;
      %%% K matrice(Restoring Force Coefficients)
     
     details.K.f = 1000*9.81*h5read('hydro/rm3.h5','/body1/hydro_coeffs/linear_restoring_stiffness'); % Linear restoring coefficient, Body 1
