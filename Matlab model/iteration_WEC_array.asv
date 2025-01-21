@@ -12,7 +12,7 @@ end
 %% Data load
 RAO = zeros(41,2);
 for ii = 10:50
-    wave_period = 0.25*ii;
+    wave_period = 0.1*ii;
 filename=sprintf("sim_out/WEC_array_apf/T%d.mat",wave_period*100);
 load(filename)
 V_s_max = max(out.logsout{1}.Values);
@@ -21,8 +21,23 @@ V_WEC1_max = max(out.logsout{4}.Values);
 RAO(ii-9,1)=wave_period;
 RAO(ii-9,2)=V_WEC1_max/V_s_max;
 end
-figure
-plot(RAO(:,1),RAO(:,2))
-grid on
-xlabel("Wave Period (seconds)")
-ylabel("RAO")
+%% plotting
+
+fig=openfig("FloatHeaveRAOOneBodyHeaveOnlyExpTNumBEM_20231004_112907_legend edit.fig");
+ax = gca; % Get current axes of the figure
+hold(ax, 'on'); % Keep the current content of the axes
+plot(RAO(:,1),RAO(:,2),LineStyle='--',LineWidth=2)
+% Optional: Update legend if needed
+lgd=legend;
+lgd.String{4} = 'Eq-ckt';
+
+% Set the window size and position
+% Position = [left, bottom, width, height]
+set(gcf, 'Position', [0, 0, 600, 600]); % Example: 800x600 window size
+
+
+% grid on
+% xlabel("Wave Period (seconds)")
+% ylabel("RAO")
+% ylim([0,2])
+
