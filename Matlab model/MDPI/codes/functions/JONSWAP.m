@@ -21,22 +21,22 @@ mean_f=m1/m0;
 % Hs_back = 4*sqrt(m0);
 scale=1;
 
-%%% PSD
-figure
-hold on
-plot(f,psd,'linewidth', 2*scale)
-xline(mean_f,'linewidth', 2*scale,'LineStyle','--')
-hold off
-xlabel("f (Hz)")
-ylabel("PSD (m^2/Hz)")
-legend("Power Spectrum Density", "Energy mean frequency")
-ax = gca;
-ax.FontSize = 24*scale;
-ax.XAxis.FontSize = 18*scale;
-ax.YAxis.FontSize = 18*scale;
-set(gca, 'LineWidth', 2*scale);
-grid on;
-wdw=gcf;
-xlim([0,f(end)])
-wdw.Position=[0,661,1920,920]*1/2*scale;
-end
+% %%% PSD
+% figure
+% hold on
+% plot(f,psd,'linewidth', 2*scale)
+% xline(mean_f,'linewidth', 2*scale,'LineStyle','--')
+% hold off
+% xlabel("f (Hz)")
+% ylabel("PSD (m^2/Hz)")
+% legend("Power Spectrum Density", "Energy mean frequency")
+% ax = gca;
+% ax.FontSize = 24*scale;
+% ax.XAxis.FontSize = 18*scale;
+% ax.YAxis.FontSize = 18*scale;
+% set(gca, 'LineWidth', 2*scale);
+% grid on;
+% wdw=gcf;
+% xlim([0,f(end)])
+% wdw.Position=[0,661,1920,920]*1/2*scale;
+% end

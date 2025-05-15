@@ -101,18 +101,18 @@ eta_filtered = movmean(eta_filtered,round(1/6/fp/time_step));
 % xlim([0,1/lupadata.T(end)])
 % wdw.Position=[0,661,1920,920]*1/2*scale;
 
-%%% eta 
-scale=1;
-figure
-plot(t,eta_filtered, 'linewidth', 0.5*scale)
-title("Water Elevation")
-xlabel("Time (s)")
-ylabel("Water elevation (m)")
-ax = gca;
-ax.FontSize = 24*scale;
-ax.XAxis.FontSize = 18*scale;
-ax.YAxis.FontSize = 18*scale;
-set(gca, 'LineWidth', 2*scale);
-grid on;
-wdw=gcf;
-wdw.Position=[0,661,1920,920]*1/2*scale;
+% %%% eta 
+% scale=1;
+% figure
+% plot(t,eta_filtered, 'linewidth', 0.5*scale)
+% title("Water Elevation")
+% xlabel("Time (s)")
+% ylabel("Water elevation (m)")
+% ax = gca;
+% ax.FontSize = 24*scale;
+% ax.XAxis.FontSize = 18*scale;
+% ax.YAxis.FontSize = 18*scale;
+% set(gca, 'LineWidth', 2*scale);
+% grid on;
+% wdw=gcf;
+% wdw.Position=[0,661,1920,920]*1/2*scale;
