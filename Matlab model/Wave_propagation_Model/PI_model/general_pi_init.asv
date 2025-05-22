@@ -34,26 +34,36 @@ V0 = simOut.V0.data;
 V1 = simOut.V1.data;
 V2 = simOut.V2.data;
 
-% 1) Find peaks in time domain (returns peak values & their times)
-[~, locs0] = findpeaks(V0, t, 'MinPeakProminence', H/4);
-[~, locs1] = findpeaks(V1, t, 'MinPeakProminence', H/4);
-[~, locs2] = findpeaks(V2, t, 'MinPeakProminence', H/4);
+%% … (after simOut and extracting t, V0, V1, V2) …
 
-% 2) Pick the 2nd peak to avoid startup transient
-iPeak = 2;
-t0 = locs0(iPeak);
-t1 = locs1(iPeak);
-t2 = locs2(iPeak);
+% 1) Compute analytic signals
+phi0 = angle(hilbert(V0));    % instantaneous phase [rad]
+phi1 = angle(hilbert(V1));
+phi2 = angle(hilbert(V2));
 
-% 3) Compute time delays
-tau01 = t1 - t0;    % time delay branch1 vs branch0
-tau02 = t2 - t0;    % time delay branch2 vs branch0
+% 2) Unwrap to remove 2π discontinuities
+u0 = unwrap(phi0);
+u1 = unwrap(phi1);
+u2 = unwrap(phi2);
 
-% 4) Convert to phase shift [deg]
-T = 1/f;
-phi01_deg = tau01/T * 360;
-phi02_deg = tau02/T * 360;
+% 3) Define a “steady‐state” time window (skip first cycle to avoid transients)
+steadyIdx = t > T;  
 
-% 5) Display results
-fprintf('Peak-timing: branch1 leads branch0 by %.2f° (τ=%.4fs)\n', phi01_deg, tau01);
-fprintf('Peak-timing: branch2 leads branch0 by %.2f° (τ=%.4fs)\n', phi02_deg, tau02);
+% 4) Compute sample‐by‐sample phase difference (rad)
+d01 = u1(steadyIdx) - u0(steadyIdx);
+d02 = u2(steadyIdx) - u0(steadyIdx);
+
+% 5) Average (or median) to get one number
+mean_d01 = mean(d01);
+mean_d02 = mean(d02);
+
+% 6) Convert to degrees
+delta_deg_01 = rad2deg(mean_d01);
+delta_deg_02 = rad2deg(mean_d02);
+
+figure;
+plot(t(steadyIdx), rad2deg(d01), '.-');
+xlabel('Time [s]');
+ylabel('Phase diff. [deg]');
+title('Instantaneous Phase Difference (Branch1 − Branch0)');
+grid on;
