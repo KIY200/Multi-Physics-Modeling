@@ -1,0 +1,69 @@
+%% Housekeeping
+clearvars; close all; clc;
+
+%% Parameters
+f        = 0.1;                % wave frequency [Hz]
+T        = 1/f;                % period [s]
+t_stop   = 3*T;                % total simulation time [s]
+rho      = 1000;               % water density [kg/m^3]
+g        = 9.81;               % gravity [m/s^2]
+w        = 2*pi*f;             % angular frequency [rad/s]
+k        = w^2/g;              % wave number [1/m]
+L_wave   = 2*pi/k;             % wavelength [m]
+H        = 2;                  % wave height [m]
+distance = 7.5;                % separation distance [m]
+
+%% Derived quantities
+del_angle = distance * k * (180/pi);           % theoretical phase shift [deg]
+d_eta_RMS = H/(2*sqrt(2));                     % RMS wave elevation [m]
+P_wave     = rho*g^2*H^2/(32*pi);              % power flux per unit width [W/m]
+SIL        = d_eta_RMS^2 / P_wave;             % Surge Impedance Load
+L_per_l    = (w/g) * SIL;                      % inductance per unit length
+C_per_l    = (w/g) / SIL / 2;                  % capacitance per branch
+L          = distance * L_per_l;               % total inductance [H]
+C          = distance * C_per_l;               % total capacitance [F]
+
+%% Run the simulation with explicit stop time
+simIn  = Simulink.SimulationInput('general_pi_model');
+simIn  = setModelParameter(simIn, 'StopTime', num2str(t_stop));
+simOut = sim(simIn);
+
+%% Extract signals
+t  = simOut.tout;
+V0 = simOut.V0.data;
+V1 = simOut.V1.data;
+V2 = simOut.V2.data;
+
+%% … (after simOut and extracting t, V0, V1, V2) …
+
+% 1) Compute analytic signals
+phi0 = angle(hilbert(V0));    % instantaneous phase [rad]
+phi1 = angle(hilbert(V1));
+phi2 = angle(hilbert(V2));
+
+% 2) Unwrap to remove 2π discontinuities
+u0 = unwrap(phi0);
+u1 = unwrap(phi1);
+u2 = unwrap(phi2);
+
+% 3) Define a “steady‐state” time window (skip first cycle to avoid transients)
+steadyIdx = t > T;  
+
+% 4) Compute sample‐by‐sample phase difference (rad)
+d01 = u1(steadyIdx) - u0(steadyIdx);
+d02 = u2(steadyIdx) - u0(steadyIdx);
+
+% 5) Average (or median) to get one number
+mean_d01 = mean(d01);
+mean_d02 = mean(d02);
+
+% 6) Convert to degrees
+delta_deg_01 = rad2deg(mean_d01);
+delta_deg_02 = rad2deg(mean_d02);
+
+figure;
+plot(t(steadyIdx), rad2deg(d01), '.-');
+xlabel('Time [s]');
+ylabel('Phase diff. [deg]');
+title('Instantaneous Phase Difference (Branch1 − Branch0)');
+grid on;
