@@ -16,7 +16,7 @@ distance = 7.5;                % separation distance [m]
 %% Derived quantities
 del_angle = distance * k * (180/pi);           % theoretical phase shift [deg]
 d_eta_RMS = H/(2*sqrt(2));                     % RMS wave elevation [m]
-P_wave     = rho*g^2*H^2/(32*pi);              % power flux per unit width [W/m]
+P_wave     = rho*g^2*H^2/(32*pi)*T;            % power flux per unit width [W/m]
 SIL        = d_eta_RMS^2 / P_wave;             % Surge Impedance Load
 L_per_l    = (w/g) * SIL;                      % inductance per unit length
 C_per_l    = (w/g) / SIL / 2;                  % capacitance per branch
