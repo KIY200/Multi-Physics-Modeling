@@ -1,0 +1,40 @@
+%% 0) Original regular η‐series
+T = 2.5;
+A = 0.2;
+w= 1/T * 2 * pi;
+t  = linspace(0,T*10,1000);     % non-uniform time stamps [s]
+eta  = A*sin(w*t+pi/2);  % corresponding η(t)
+deta = A*w*cos(w*t+pi/2);
+ddeta = -A*w^2*sin(w*t+pi/2);
+%% Now t_eta and eta are uniform; you can proceed with IRF resampling & convolution
+location = 'hydro/floatspar.h5';
+
+[IRF_t,ckt.FIR_causal, ckt.FIR_non_causal,Fex1_freq]=Excitation_FIR(location);
+IRF_dt=IRF_t(2)-IRF_t(1);
+ckt.FIR_combined = [ckt.FIR_non_causal; ckt.FIR_causal];
+
+load('lupadata_spring2024_sparD1_14m.mat');
+
+[hydro.float_mass, ...
+    A,...
+    B, ...
+    K, ...
+    hydro.spar_mass, ...
+    hydro.spar_added_mass,...
+    hydro.spar_damping, ...
+    hydro.spar_stiffness] = fn_get_lupa_params(w,lupadata);
+[~,ix_w] = min((lupadata.w-w).^2); 
+F_ex_w = Fex1_freq(ix_w);
+F_ts=real(A*abs(F_ex_w)*exp(1i*w*t));
+
+F_ex_approx = A*ddeta+B*deta+K*eta;
+
+
+% plot result
+figure;
+plot(t, F_ts);
+hold on
+plot(t,F_ex_approx)
+legend("WAMIT Fex","ABK appx",'Interpreter','latex')
+xlabel('Time [s]','Interpreter','latex');
+ylabel('$F_{ex}(t)$','Interpreter','latex');
