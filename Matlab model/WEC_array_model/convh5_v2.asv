@@ -1,0 +1,45 @@
+function hydro = convh5_v2(filename, body_up, body_dn)
+% CONVH5  Load & denormalize hydrodynamic data for two bodies (6×24×Nw layout).
+% Ensures outputs are always [6 x (6*Nb) x Nw].
+
+    if nargin < 2, body_up = 1; end
+    if nargin < 3, body_dn = 3; end
+
+    rho = 1000;
+    g   = 9.81;
+
+    % Frequency vector
+    w = h5read(filename, '/simulation_parameters/w');
+    w = w(:).';   % 1xNw
+    hydro.w = w;
+
+    % Read both bodies
+    up_raw = read_body_rowblock(filename, body_up);
+    dn_raw = read_body_rowblock(filename, body_dn);
+
+    Nb = size(up_raw.Add_mass, 2) / 6; % number of bodies
+    col_idx = @(j) ((j-1)*6 + (1:6));
+
+    % Denormalization + slicing
+    hydro.float_up = up_raw;
+    hydro.float_dn = dn_raw;
+end
+
+
+function out = read_body_rowblock(file, body_idx)
+    base = sprintf('/body%d/hydro_coeffs', body_idx);
+
+    A  = h5read(file, [base '/added_mass/all']);
+    B  = h5read(file, [base '/radiation_damping/all']);
+    K  = h5read(file, [base '/linear_restoring_stiffness']);
+    Re = h5read(file, [base '/excitation/re']);
+    Im = h5read(file, [base '/excitation/im']);
+
+    out.Add_mass   = rho*A;
+    out.Rad_damping= rho*hydro.w.*B;
+    out.K          = rho*g*K;
+    out.Fex_re     = rho*g*Re;
+    out.Fex_im     = rho*g*Im;
+end
+
+
