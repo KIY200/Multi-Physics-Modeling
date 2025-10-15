@@ -9,12 +9,12 @@ function hydro = convh5_v2(filename, body_up, body_dn)
 
     rho = 1000;
     g   = 9.81;
-
+    
     % Frequency vector (1 x Nw)
     w  = h5read(filename, '/simulation_parameters/w');
     w  = w(:).';
     Nw = numel(w);
-
+    Vol = h5read(filename, '/body1/properties/disp_vol');
     % ---------- Upper body ----------
     base = sprintf('/body%d/hydro_coeffs', body_up);
     A  = h5read(filename, [base '/added_mass/all']);        % [Nw x 24 x 6]
@@ -22,13 +22,15 @@ function hydro = convh5_v2(filename, body_up, body_dn)
     Re = h5read(filename, [base '/excitation/re']);         % [Nw x 24 x 6]
     Im = h5read(filename, [base '/excitation/im']);         % [Nw x 24 x 6]
     K  = h5read(filename, [base '/linear_restoring_stiffness']); % [6 x 6]
+   
 
     % Permute to [6 x 24 x Nw]
     A  = permute(A,  [3 2 1]);
     B  = permute(B,  [3 2 1]);
     Re = permute(Re, [3 2 1]);
     Im = permute(Im, [3 2 1]);
-
+    
+    float_up.dry_mass    = rho * Vol;
     float_up.Add_mass    = rho .* A;
     float_up.Rad_damping = rho .* (B .* reshape(w,1,1,[])); % scale by ω
     float_up.K           = rho * g .* K;                    % stays [6 x 6]
@@ -47,7 +49,8 @@ function hydro = convh5_v2(filename, body_up, body_dn)
     B  = permute(B,  [3 2 1]);
     Re = permute(Re, [3 2 1]);
     Im = permute(Im, [3 2 1]);
-
+    
+    float_dn.dry_mass    = rho * Vol;
     float_dn.Add_mass    = rho .* A;
     float_dn.Rad_damping = rho .* (B .* reshape(w,1,1,[]));
     float_dn.K           = rho * g .* K;   % [6 x 6]
