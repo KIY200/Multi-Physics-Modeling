@@ -1,5 +1,5 @@
 %% Data acquisition
-load("T_2_H_p1_D_3m.mat")
+load("T_2_H_p1_D_4m.mat")
 sc_factor = 20;
 % If the loaded variable isn't literally named "data", you can adapt this:
 % e.g., data = logsout;  or data = out.logsout;
@@ -19,6 +19,9 @@ end
 
 output.P_in_WEC1_scaled.x = output.P_in_WEC1.x.*20^3.5;
 output.P_in_WEC2_scaled.x = output.P_in_WEC2.x.*20^3.5;
+
+P_loss_LUPA1 = -mean(output.P_loss_WEC1.x);
+P_loss_LUPA2 = -mean(output.P_loss_WEC2.x);
 
 
 %% Plotting
@@ -57,7 +60,7 @@ plot(ax1, output.P_in_WEC1.t*sc_factor^0.5, output.P_in_WEC1_scaled.x/1000, ...
 plot(ax1, output.P_in_WEC2.t*sc_factor^0.5, output.P_in_WEC2_scaled.x/1000, ...
     'LineWidth', LW, 'Color', c2);
 ylabel(ax1, 'Power (kW)', 'FontName','Times New Roman');
-title(ax1, 'Wave Power Input', 'FontName','Times New Roman', 'FontWeight','normal');
+title(ax1, 'Wave-Excitation Power', 'FontName','Times New Roman', 'FontWeight','normal');
 legend(ax1, {'WEC1','WEC2'}, 'Location','northeast', 'Box','off');
 formatAx(ax1);
 hold(ax1,'off');
@@ -100,3 +103,83 @@ linkaxes([ax1 ax2 ax3], 'x');
 %Export (vector PDF recommended for publications)
 exportgraphics(fig, 'Power_3panel.pdf', 'ContentType','vector', 'Resolution',300);
 exportgraphics(fig, 'Power_3panel.png', 'ContentType','vector', 'Resolution',300);
+
+
+
+
+%% Average Power Metrics (kW)
+
+% Wave input power
+Pin1_avg = mean(output.P_in_WEC1_scaled.x) / 1000;
+Pin2_avg = mean(output.P_in_WEC2_scaled.x) / 1000;
+
+% PTO generated power
+PTO1_avg = mean(output.P_WEC1_Full_scale.x) / 1000;
+PTO2_avg = mean(output.P_WEC2_Full_scale.x) / 1000;
+
+% Transmission losses
+Loss1_avg = mean(output.P_loss_Full_scale_WEC1.x) / 1000;
+Loss2_avg = mean(output.P_loss_Full_scale_WEC2.x) / 1000;
+
+% Transmission loss as % of PTO power
+Loss1_pct = Loss1_avg / PTO1_avg * 100;
+Loss2_pct = Loss2_avg / PTO2_avg * 100;
+
+Eff1 = (PTO1_avg - Loss1_avg) / Pin1_avg * 100;   % %
+Eff2 = (PTO2_avg - Loss2_avg) / Pin2_avg * 100;   % %
+
+%% Create Summary Table for Report (Word-ready)
+
+Metric = {
+    'Average Wave Input Power (kW)';
+    'Average PTO Power (kW)';
+    'Average Transmission Loss (kW)';
+    'Transmission Loss (% of PTO Power)';
+    'Overall Efficiency ((PTO - Loss) / Input) (%)'
+};
+
+WEC1 = [
+    Pin1_avg;
+    PTO1_avg;
+    Loss1_avg;
+    Loss1_pct;
+    Eff1
+];
+
+WEC2 = [
+    Pin2_avg;
+    PTO2_avg;
+    Loss2_avg;
+    Loss2_pct;
+    Eff2
+];
+
+T = table( ...
+    Metric, ...
+    round(WEC1,2), ...
+    round(WEC2,2), ...
+    'VariableNames', {'Metric','WEC1','WEC2'} );
+
+%% Export table to Microsoft Word
+
+docFile = 'Average_Power_Summary.docx';
+
+if isfile(docFile)
+    delete(docFile);
+end
+
+import mlreportgen.dom.*
+
+d = Document(docFile,'docx');
+append(d, Paragraph('Average Power Performance Summary'));
+
+tbl = FormalTable(T);
+tbl.Header.Style = {Bold(true)};
+tbl.Style = { ...
+    Width('100%'), ...
+    Border('single'), ...
+    ColSep('single'), ...
+    RowSep('single') };
+
+append(d, tbl);
+close(d);

@@ -1,0 +1,11 @@
+Metric,Units,Definition,Formula,Notes
+Pin_rms_kW,kW,"RMS of wave input power to WEC (scaled), averaged over analysis window.",Pin_rms = rms(Pin(t)),Pin(t) in kW; computed on resampled common grid.
+Ppto_rms_kW,kW,"RMS of PTO electrical generation power (full-scale), over analysis window.",Ppto_rms = rms(Ppto(t)),Ppto(t) in kW; computed on resampled common grid.
+Ploss_rms_kW,kW,"RMS of transmission power loss (full-scale), over analysis window.",Ploss_rms = rms(Ploss(t)),Ploss(t) in kW; computed on resampled common grid.
+Pdel_rms_kW,kW,RMS of delivered power after transmission: Pdel = Ppto - Ploss.,Pdel_rms = rms(Ppto(t) - Ploss(t)),Delivered power excludes modeled transmission loss only.
+Eff_RMS_pct,%,RMS-based efficiency from wave input to delivered power.,Eff_RMS = 100 * rms(Ppto - Ploss) / rms(Pin),Use RMS metric for steady/periodic comparisons.
+Eff_Energy_pct,%,Energy-based efficiency from wave input to delivered energy.,Eff_E = 100 * ∫(Ppto - Ploss)dt / ∫Pin dt,Energy metric is preferred for irregular seas / nonstationary signals.
+LossFrac_RMS_pct,%,RMS-based transmission loss fraction relative to PTO power.,LossFrac_RMS = 100 * rms(Ploss) / rms(Ppto),Higher value means higher fraction lost in transmission.
+LossFrac_Energy_pct,%,Energy-based transmission loss fraction relative to PTO energy.,LossFrac_E = 100 * ∫Ploss dt / ∫Ppto dt,Energy fraction is less sensitive to waveform shape than RMS.
+Corr_Pin_Ppto,unitless,Pearson correlation coefficient between Pin(t) and Ppto(t).,"Corr = corr(Pin, Ppto)",Close to 1 indicates strong tracking; negative indicates inverse relation.
+Lag_Ppto_vs_Pin_s,s,Estimated time lag (seconds) where Ppto best aligns with Pin via cross-correlation.,"Lag = argmax_tau xcorr(Ppto, Pin) * dt",Positive lag means Ppto lags Pin; depends on control & dynamics.

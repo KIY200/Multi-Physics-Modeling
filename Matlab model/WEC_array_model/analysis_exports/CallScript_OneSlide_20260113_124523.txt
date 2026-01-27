@@ -1,0 +1,30 @@
+ONE-SLIDE SUMMARY (Conference Call Script)
+Generated: 13-Jan-2026 12:45:52
+Analysis window: [0.000, 89.443] s   |   Resample dt: 0.020869 s
+
+Slide Title:
+  Equivalent-Circuit Power Flow Results (Regular Wave: H = 2 m, T = 8.94 s)
+
+Talk Track (60–90 seconds):
+  • This slide summarizes power flow metrics for WEC1 and WEC2 using the equivalent-circuit transmission model.
+  • We report both RMS-based and energy-based metrics; energy-based efficiency is typically more robust for non-sinusoidal or irregular signals.
+
+  WEC1:
+    - Delivered efficiency (energy-based) = 43.7%; RMS-based = 29.1%.
+    - Transmission loss fraction (energy-based) = 0.9%; RMS-based = 1.1%.
+    - RMS powers [kW]: Pin=2222.05, PTO=653.70, Loss=7.40, Delivered=646.67.
+    - Tracking: Corr(Pin,PTO)=0.44, lag=3.610 s.
+
+  WEC2:
+    - Delivered efficiency (energy-based) = 45.0%; RMS-based = 29.4%.
+    - Transmission loss fraction (energy-based) = 0.7%; RMS-based = 0.8%.
+    - RMS powers [kW]: Pin=1665.46, PTO=493.24, Loss=4.13, Delivered=489.29.
+    - Tracking: Corr(Pin,PTO)=0.44, lag=3.631 s.
+
+Key Takeaways (bullet options for the slide):
+  • Delivered efficiency: WEC1 43.7% vs WEC2 45.0% (energy-based).
+  • Loss fraction: WEC1 0.9% vs WEC2 0.7% (energy-based).
+  • PTO power tracks wave input with Corr 0.44/0.44 and lag 3.610/3.631 s (WEC1/WEC2).
+
+Suggested Next Step:
+  • Confirm sensitivity to cable parameters (R, L, C) and extend the same analysis to irregular seas / varying PTO control settings.

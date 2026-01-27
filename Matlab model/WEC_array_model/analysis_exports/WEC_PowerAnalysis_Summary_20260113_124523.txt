@@ -1,0 +1,37 @@
+WEC Array Equivalent-Circuit Power Analysis Summary
+Generated: 13-Jan-2026 12:45:24
+Analysis window: [0.000, 89.443] s
+Resample dt: 0.020869 s
+
+Key metrics (RMS-based) [kW] and efficiencies [%]
+-------------------------------------------------
+WEC1
+  Pin_rms   = 2222.048 kW
+  Ppto_rms  = 653.704 kW
+  Ploss_rms = 7.399 kW
+  Pdel_rms  = 646.665 kW
+  Eff_RMS   = 29.10 %
+  Eff_E     = 43.75 %
+  LossFrac_RMS = 1.13 %
+  LossFrac_E   = 0.93 %
+  Corr(Pin,Ppto) = 0.442
+  Lag(Ppto vs Pin) = 3.6104 s
+
+WEC2
+  Pin_rms   = 1665.464 kW
+  Ppto_rms  = 493.242 kW
+  Ploss_rms = 4.130 kW
+  Pdel_rms  = 489.293 kW
+  Eff_RMS   = 29.38 %
+  Eff_E     = 44.97 %
+  LossFrac_RMS = 0.84 %
+  LossFrac_E   = 0.70 %
+  Corr(Pin,Ppto) = 0.439
+  Lag(Ppto vs Pin) = 3.6312 s
+
+Files exported:
+  Results CSV:  /Users/inyongkim/Documents/GitHub/Multi-Physics-Modeling/Matlab model/WEC_array_model/analysis_exports/WEC_PowerAnalysis_Results_20260113_124523.csv
+  Results XLSX: /Users/inyongkim/Documents/GitHub/Multi-Physics-Modeling/Matlab model/WEC_array_model/analysis_exports/WEC_PowerAnalysis_Results_20260113_124523.xlsx
+  Metric Dictionary CSV:  /Users/inyongkim/Documents/GitHub/Multi-Physics-Modeling/Matlab model/WEC_array_model/analysis_exports/WEC_PowerAnalysis_MetricDictionary_20260113_124523.csv
+  Metric Dictionary XLSX: /Users/inyongkim/Documents/GitHub/Multi-Physics-Modeling/Matlab model/WEC_array_model/analysis_exports/WEC_PowerAnalysis_MetricDictionary_20260113_124523.xlsx
+  Summary TXT:  /Users/inyongkim/Documents/GitHub/Multi-Physics-Modeling/Matlab model/WEC_array_model/analysis_exports/WEC_PowerAnalysis_Summary_20260113_124523.txt

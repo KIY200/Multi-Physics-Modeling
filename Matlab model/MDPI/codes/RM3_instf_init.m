@@ -16,6 +16,7 @@ Te=1/1.1/fp;
 wbar = 2*pi*fp;
 H_s = 2.4; %% Significant wave height = (m)
 [S_f, S_w] = JONSWAP(gamma,fp,H_s);
+
 rho=1000;
 g=9.81;
 
