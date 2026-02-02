@@ -1,21 +1,21 @@
 clear; clc;
 addpath("functions/")
 
-% %% JONSWAP wave generator
-% 
-% duration=1200; % simulation time
-% 
-% t = linspace(0,duration,duration*100)';
-% dt=t(2)-t(1); % timestep
-% 
+%% JONSWAP wave generator
+
+duration=1200; % simulation time
+
+t = linspace(0,duration,duration*100)';
+dt=t(2)-t(1); % timestep
+
 %%% Wave time series generation (JOSWAP Spectrum)
-gamma = 4; %% Narrowness of spectrum
+gamma = 3.3; %% Narrowness of spectrum
 fp = 1/9; %% Peak Frequency
 
 Te=1/1.1/fp;
 wbar = 2*pi*fp;
-H_s = 2.4; %% Significant wave height = (m)
-[S_f, S_w] = JONSWAP(gamma,fp,H_s);
+% H_s = 2.4; %% Significant wave height = (m)
+% [S_f, S_w] = JONSWAP(gamma,fp,H_s);
 
 rho=1000;
 g=9.81;
@@ -27,14 +27,13 @@ v_g = 1/2*sqrt(g./k);
 P_wave = rho*g*trapz(S_f(:,1),v_g.*S_f(:,2));
 P_wave_a = rho*g^2*H_s^2*Te/64/pi;
 
-% 
-% 
 
-% % eta_JONSWAP= psd2eta(S_w,fp,t);
-% % eta = [t eta_JONSWAP];
-% 
+% eta_JONSWAP= psd2eta(S_w,fp,t);
+% eta = [t eta_JONSWAP];
+
 
 %% load files
+
 filename = "hydro/rm3.h5";
 hydro=h5tostruct(filename);
 
@@ -44,6 +43,8 @@ t=Fex_ts.eta_RM3_H2p4T9p0_0p1_seed1.Time;
 dt = round(t(2)-t(1),1);
 % Fex_ts.Fex_2 = Fex_ts.Fex_RM3_H2p4T9p0_0p1_seed1.data;
 eta= Fex_ts.eta_RM3_H2p4T9p0_0p1_seed1;
+
+%% Load State-Space Model
 load("rm3_ss_0p1.mat")
 fp = 1/9; %% Peak Frequency
 wbar = 2*pi*fp;
