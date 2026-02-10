@@ -16,6 +16,13 @@ function hydro = h5tostruct(filename)
         hydro.float.Fex.im = h5read(filename, [h5BodyName '/hydro_coeffs/excitation/im']);
         hydro.float.Fex.IRF.f = h5read(filename, [h5BodyName '/hydro_coeffs/excitation/impulse_response_fun/f']);
         hydro.float.Fex.IRF.t = h5read(filename, [h5BodyName '/hydro_coeffs/excitation/impulse_response_fun/t']);
+        % Spar data from the first file
+        hydro.spar.A_m =  reverseDimensionOrder(h5read(filename, [h5BodyName2 '/hydro_coeffs/added_mass/all']));
+        hydro.spar.R_damp = reverseDimensionOrder(h5read(filename, [h5BodyName2 '/hydro_coeffs/radiation_damping/all']));
+        hydro.spar.K_hs = reverseDimensionOrder(h5read(filename, [h5BodyName2 '/hydro_coeffs/linear_restoring_stiffness']));
+        hydro.spar.M = 1000* h5read(filename,[h5BodyName2 '/properties/disp_vol']);
+        hydro.spar.Fex.re = h5read(filename, [h5BodyName2 '/hydro_coeffs/excitation/re']);
+        hydro.spar.Fex.im = h5read(filename, [h5BodyName2 '/hydro_coeffs/excitation/im']);
         hydro.spar.Fex.IRF.f = h5read(filename, [h5BodyName2 '/hydro_coeffs/excitation/impulse_response_fun/f']);
         hydro.spar.Fex.IRF.t = h5read(filename, [h5BodyName2 '/hydro_coeffs/excitation/impulse_response_fun/t']);
 end

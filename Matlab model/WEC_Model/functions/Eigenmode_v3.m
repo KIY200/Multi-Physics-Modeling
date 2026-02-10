@@ -27,7 +27,7 @@ end
     % M_f*(-w^2)*phi + K_hs_f*phi = 0
     % M_f^-1 * K_hs_f*phi = w^2*phi
     % let w^2 = lambda, M_f^-1 * K_hs_f = A
-    % A[]*phi = lambda*phi <- eigenvalue probledetails.M.
+    % A[]*phi = lambda*phi <- eigenvalue details.M.
     
     eigen.V = zeros(260,7,7);
     eigen.D = zeros(260,7,7);
