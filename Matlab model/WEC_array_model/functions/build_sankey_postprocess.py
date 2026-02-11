@@ -16,13 +16,14 @@ def main():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    wec1 = data["wec1"]
-    wec2 = data["wec2"]
-
-    figures_dir = os.path.join(os.getcwd(), "figures")
+    project_dir = os.path.dirname(os.path.abspath(path))
+    figures_dir = os.path.join(project_dir, "figures")
     os.makedirs(figures_dir, exist_ok=True)
     sankey1_path = os.path.join(figures_dir, "Sankey_WEC1.png")
     sankey2_path = os.path.join(figures_dir, "Sankey_WEC2.png")
+
+    wec1 = data["wec1"]
+    wec2 = data["wec2"]
 
     make_sankey(
         wec1["P_inc"],

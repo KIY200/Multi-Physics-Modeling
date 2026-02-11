@@ -17,11 +17,11 @@ function [Fex7,M7,K_hs7,B_rad7,wave] = const_hydro(filename, Tc, bodyPair)
     details.Fex_b2.im=1000*h5read(filename, sprintf('/body%d/hydro_coeffs/excitation/im', body2));
     Fex_b1=complex(details.Fex_b1.re,details.Fex_b1.im);
     Fex_b2=complex(details.Fex_b2.re,details.Fex_b2.im);
-    nfreq = size(Fex_b1, 1);
+    nfreq = size(Fex_b1, 3);
     Fex7=zeros(nfreq,7,1);
     for ii=1:nfreq
-    details.Fex(ii,:,:) = [squeeze(Fex_b1(ii,:,:)); squeeze(Fex_b2(ii,:,:))];
-    Fex7(ii,:,:) = squeeze(details.Fex(ii,:,:))*Tc;
+    details.Fex(ii,:,:) = [squeeze(Fex_b1(:,:,ii)); squeeze(Fex_b2(:,:,ii))];
+    Fex7(ii,:,:) = Tc' * squeeze(details.Fex(ii,:,:));
     end
     
 
@@ -45,10 +45,14 @@ function [Fex7,M7,K_hs7,B_rad7,wave] = const_hydro(filename, Tc, bodyPair)
     M7 = zeros(nfreq,7,7);
     M_add7 = zeros(nfreq,7,7);
     for ii=1:nfreq
-    details.M.M_f(ii,:,:) = details.M.m_f+squeeze(details.M.m_a_f(ii,:,:));
-    details.M.M_s(ii,:,:) = details.M.m_s+squeeze(details.M.m_a_s(ii,:,:));
+    m_a_f = squeeze(details.M.m_a_f(:,:,ii));
+    m_a_s = squeeze(details.M.m_a_s(:,:,ii));
+    m_a_f = [m_a_f(:,1:6); zeros(6,6)];
+    m_a_s = [zeros(6,6); m_a_s(:,7:12)];
+    details.M.M_f(ii,:,:) = details.M.m_f + m_a_f;
+    details.M.M_s(ii,:,:) = details.M.m_s + m_a_s;
     details.M.Mass(ii,:,:) = [squeeze(details.M.M_f(ii,1:6,:)) zeros(6,6);zeros(6,6) squeeze(details.M.M_s(ii,7:12,:))];
-    details.M_add(ii,:,:) = [squeeze(details.M.m_a_f(ii,1:6,:)) zeros(6,6);zeros(6,6) squeeze(details.M.m_a_s(ii,7:12,:))];
+    details.M_add(ii,:,:) = [m_a_f(1:6,:) zeros(6,6);zeros(6,6) m_a_s(7:12,:)];
     M7(ii,:,:) = Tc'*squeeze(details.M.Mass(ii,:,:))*Tc;
     M_add7(ii,:,:) = Tc'*squeeze(details.M_add(ii,:,:))*Tc;
     end
@@ -72,8 +76,10 @@ function [Fex7,M7,K_hs7,B_rad7,wave] = const_hydro(filename, Tc, bodyPair)
     B_rad7 = zeros(nfreq,7,7);
     
     for ii=1:nfreq
-    details.B.B_f(ii,:,:) = 1000*wave.w(ii)*details.B.nf(ii,:,:); % radiation for all frequencies
-    details.B.B_s(ii,:,:) = 1000*wave.w(ii)*details.B.ns(ii,:,:); % radiation for all frequencies
+    B_f = squeeze(details.B.nf(:,:,ii));
+    B_s = squeeze(details.B.ns(:,:,ii));
+    details.B.B_f(ii,:,:) = 1000*wave.w(ii)*[B_f(:,1:6); zeros(6,6)]; % radiation for all frequencies
+    details.B.B_s(ii,:,:) = 1000*wave.w(ii)*[zeros(6,6); B_s(:,7:12)]; % radiation for all frequencies
     % details.B.B_rad(ii,:,:) = [squeeze(details.B.B_f(ii,:,:)) squeeze(details.B.B_s(ii,:,:))];
     details.B.B_rad(ii,:,:) = ...
     [squeeze(details.B.B_f(ii,1:6,:)) zeros(6,6); ... 
