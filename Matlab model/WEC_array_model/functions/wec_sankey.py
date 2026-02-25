@@ -15,13 +15,27 @@ def make_sankey(incident, absorbed, pto, delivered, elec_loss, outpath, wec_labe
     unabsorbed   = incident - absorbed
     non_pto_loss = absorbed - pto
 
+    # Guard against tiny/negative values that can break Sankey connections
+    incident = max(incident, 0.0)
+    absorbed = max(absorbed, 0.0)
+    pto = max(pto, 0.0)
+    delivered = max(delivered, 0.0)
+    elec_loss = max(elec_loss, 0.0)
+    unabsorbed = max(unabsorbed, 0.0)
+    non_pto_loss = max(non_pto_loss, 0.0)
+
+    # Enforce flow conservation for each stage
+    incident = max(incident, absorbed + unabsorbed)
+    absorbed = max(absorbed, pto + non_pto_loss)
+    pto = max(pto, delivered + elec_loss)
+
     fig = plt.figure(figsize=(14, 4), facecolor="white")
     ax = fig.add_subplot(1, 1, 1, facecolor="white")
     ax.set_xticks([]); ax.set_yticks([])
 
     title = ax.set_title(
         f"{wec_label} Power Flow (Sankey)\n"
-        "Incident: {:.2f} W | Absorbed: {:.2f} W | "
+        "Resource: {:.2f} W | Absorbed: {:.2f} W | "
         "PTO: {:.2f} W | Delivered: {:.2f} W | Loss: {:.2f} W".format(
             incident, absorbed, pto, delivered, elec_loss
         ),
@@ -46,7 +60,7 @@ def make_sankey(incident, absorbed, pto, delivered, elec_loss, outpath, wec_labe
         patchlabel=None,
         flows=[incident, -absorbed, -unabsorbed],
         orientations=[0, 0, -1],
-        labels=[f"Wave Power", "Absorbed", "Unabsorbed/Reflected"],
+        labels=[f"Wave Resources", "Absorbed", "Unabsorbed/Reflected"],
         pathlengths=[1.2, 1.2, 1.8],
         facecolor="#2e6bd1",
         edgecolor="black",

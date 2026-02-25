@@ -45,6 +45,9 @@ classdef WEC_Sankey_App < matlab.apps.AppBase
 
     methods (Access = private)
         function runSimulation(app)
+            if ~app.IsInitialized
+                app.InitButtonPushed([], []);
+            end
             model = app.ModelName;
             if strcmp(app.ModelDropDown.Value, 'Two-body')
                 model = app.TwoBodyModelName;
@@ -152,6 +155,13 @@ classdef WEC_Sankey_App < matlab.apps.AppBase
             runSimulation(app);
         end
 
+        function ModelDropDownChanged(app, ~, ~)
+            app.IsInitialized = false;
+            app.InitStatusLamp.Color = [1 1 0];
+            app.StatusLabel.Text = 'Model changed; reinitialize required.';
+            evalin('base','clearvars -except HydroFile rx Tp');
+        end
+
         function updateControlsPanelSize(app)
             if isempty(app.ControlsContentPanel) || ~isvalid(app.ControlsContentPanel)
                 return;
@@ -213,6 +223,7 @@ classdef WEC_Sankey_App < matlab.apps.AppBase
             app.ModelDropDown = uidropdown(app.ControlsGrid);
             app.ModelDropDown.Items = {'One-body (heave)', 'Two-body'};
             app.ModelDropDown.Value = 'One-body (heave)';
+            app.ModelDropDown.ValueChangedFcn = @(src, event) app.ModelDropDownChanged(src, event);
 
             app.DampingLabel = uilabel(app.ControlsGrid, 'Text', 'PTO Damping rx');
             app.DampingField = uieditfield(app.ControlsGrid, 'numeric');

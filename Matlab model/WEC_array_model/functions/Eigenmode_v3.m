@@ -1,9 +1,9 @@
 function hydro = Eigenmode_v3(filename)
 %% Constraint matrix formulation
-        CSRT.WEC1.CGf = h5read(filename,'/body1/properties/cg'); %Center of gravity, Body 1
-        CSRT.WEC1.CGs = h5read(filename,'/body2/properties/cg'); %Center of gravity, Body 2
-        CSRT.WEC2.CGf = h5read(filename,'/body3/properties/cg'); %Center of gravity, Body 1
-        CSRT.WEC2.CGs = h5read(filename,'/body4/properties/cg'); %Center of gravity, Body 2
+        CSRT.WEC1.CGf = [0,0,0.02]; %Center of gravity, Body 1
+        CSRT.WEC1.CGs = [0,0,-1.345]; %Center of gravity, Body 2
+        CSRT.WEC2.CGf = [0,0,0.02]; %Center of gravity, Body 1
+        CSRT.WEC2.CGs = [0,0,-1.345]; %Center of gravity, Body 2
         CSRT.WEC1.d = abs(CSRT.WEC1.CGf(3)-CSRT.WEC1.CGs(3));
         CSRT.WEC2.d = abs(CSRT.WEC2.CGf(3)-CSRT.WEC2.CGs(3));
     

@@ -39,6 +39,9 @@ output = struct();
 
 for ii = 1:data.numElements
     elem = data.get(ii);                    % Simulink.SimulationData.Signal
+    if isempty(elem.Name)
+        continue;
+    end
     sigName = matlab.lang.makeValidName(elem.Name);
 
     % elem.Values is usually a timeseries
@@ -51,24 +54,30 @@ end
 
 rho=1000;
 g=9.81;
-Hs= output.Hs.x;
-Te= (2*pi/output.wp.x);
+Hs = get_signal(output, 'Hs');
+wp = get_signal(output, 'wp');
+Hs = mean(Hs, 'omitnan');
+wp = mean(wp, 'omitnan');
+Te = (2*pi/wp);
 
 % Potential average wave power (available Power)
 P_wave_input_avg = rho*g^2*Hs^2*Te/32/pi*LUPA_width;
+if ~isfinite(P_wave_input_avg)
+    P_wave_input_avg = 0;
+end
 
 % Average tranmitted power From Incident wave to WEC device (partially
 % dissipated due to the lag between exictation force and WEC motion.)
-Pin1_avg = mean(output.P_in_WEC1.x);
-Pin2_avg = mean(output.P_in_WEC2.x);
+Pin1_avg = safe_mean(get_signal(output, 'P_in_WEC1'));
+Pin2_avg = safe_mean(get_signal(output, 'P_in_WEC2'));
 
 % PTO generated power
-PTO1_avg = mean(output.P_pto_WEC1.x);
-PTO2_avg = mean(output.P_pto_WEC2.x);
+PTO1_avg = safe_mean(get_signal(output, 'P_pto_WEC1'));
+PTO2_avg = safe_mean(get_signal(output, 'P_pto_WEC2'));
 
 % Local Transmission losses
-Loss1_avg = -mean(output.P_loss_WEC1.x);
-Loss2_avg = -mean(output.P_loss_WEC2.x);
+Loss1_avg = -safe_mean(get_signal(output, 'P_loss_WEC1'));
+Loss2_avg = -safe_mean(get_signal(output, 'P_loss_WEC2'));
 
 %% --- 1) Build WEC1 Sankey (independent input) ---
 
@@ -173,4 +182,19 @@ cmd = sprintf('"%s" "%s" "%s"', python_exe, script_path, json_path);
 [status, cmdout] = system(cmd);
 if status ~= 0
     warning('Python Sankey failed: %s', cmdout);
+end
+
+function x = get_signal(output, name)
+    if isfield(output, name)
+        x = output.(name).x;
+        return;
+    end
+    error('Missing required signal in logsout: %s', name);
+end
+
+function m = safe_mean(x)
+    m = mean(x, 'omitnan');
+    if ~isfinite(m)
+        m = 0;
+    end
 end
